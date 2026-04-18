@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background: #242424;
+            padding: 40px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+        }
+        h2 { text-align: center; }
+        input {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #fe2c55;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover { background: #e0264b; }
+    </style>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <h2>MockTok</h2>
+        <input type="text" name="username" placeholder="Usuario" required>
+        <input type="password" name="password" placeholder="Contraseña" required>
+        <button type="submit">Iniciar sesión</button>
+    </form>
+</body>
+</html>
