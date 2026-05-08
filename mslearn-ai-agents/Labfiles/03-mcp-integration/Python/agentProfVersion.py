@@ -39,16 +39,43 @@ with(
     print(f"Agente creado | ID: {agent.id}, name: {agent.name}, versión: {agent.version}")
 
     # Create conversation thread
-    
+    conversation = openai_client.conversations.create()
+    print(f"Conversación creada (id: {conversation.id})")
 
     # Send initial request that will trigger the MCP tool
-    
+    response = openai_client.responses.create(
+        conversation=conversation.id,
+        input="Dame los comandos de Azure CLI para crear un Azure Container App con managed identity",
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference" }}
+    )
 
     # Process any MCP approval requests that were generated
+    input_list: ResponseInputParam = []
+    for item in response.output:#Se usa for por que no estamos haceiendo uso del streaming y por tanto ya se conoce la longitud final
+        if item.type == "mcp_approval_request":
+            if item.server_label == "api-specs" and item.id:
+                input_list.append(
+                    McpApprovalRequest(
+                        type="mcp_approval_response",
+                        approve=True,
+                        approval_request_id=item.id
+                    )
+                )
+
+    print("Final input:")
+    print(input_list)
 
 
     # Send the approval response back and retrieve a response
-    
+    response = openai_client.responses.create(
+        input=input_list,
+        previous_response_id=response.id,
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference" }}
+    )
+
+    print(f"\nAgente: {response.output_text}")
     
     # Clean up resources by deleting the agent version
+    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agente eliminado")
     
